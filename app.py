@@ -1,22 +1,13 @@
-# --- CELDA ÚNICA: Aplicación Completa (SIN DEPENDENCIAS EXTERNAS) ---
-# Esta versión NO requiere !pip install y funciona a la primera.
-# INCLUYE LA CORRECCIÓN: Botón "Actualizar Balance y Cálculos" para
-# registrar los cambios en los inputs Kn/Ksr.
-
-print("Cargando librerías estándar...")
-
-# --- Importar las bibliotecas necesarias ---
+# --- Aplicación Completa de Balance Eléctrico (Versión .py) ---
 import ipywidgets as widgets
 from IPython.display import display, clear_output, HTML, SVG
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from google.colab import files # Para la descarga de archivos
 import io
-import openpyxl # Requerido por pandas para Excel
-import json # Para Guardar/Cargar
-from base64 import b64encode # Para descargas
-import warnings # Para suprimir advertencias
+import json
+from base64 import b64encode
+import warnings
 
 # Suprimir advertencias menores
 warnings.filterwarnings('ignore', category=FutureWarning)
@@ -46,6 +37,43 @@ CABLE_DATABASE = {
     "120 mm²": {'R_ohm_km': 0.154, 'X_ohm_km': 0.076, 'Ampacidad_A': 292},
     "150 mm²": {'R_ohm_km': 0.124, 'X_ohm_km': 0.076, 'Ampacidad_A': 337},
 }
+
+
+# --- Base de Datos de Generadores ---
+GEN_DATABASE = [
+    # (Fabricante, Modelo, Potencia_kW_60Hz, Potencia_kW_50Hz)
+    ("Caterpillar", "C7.1", 175, 150),
+    ("Caterpillar", "C9.3", 300, 250),
+    ("Caterpillar", "C18", 550, 450),
+    ("Caterpillar", "C18 ACERT", 600, 500),
+    ("Caterpillar", "C32", 940, 800),
+    ("Caterpillar", "3508C", 800, 680),
+    ("Caterpillar", "3512C", 1360, 1150),
+    ("Caterpillar", "3516C", 2000, 1700),
+    ("Caterpillar", "3516E", 2550, 2200),
+    ("Cummins", "QSK19-DM", 560, 460),
+    ("Cummins", "QSK38-DM", 1200, 1000),
+    ("Cummins", "QSK50-DM", 1600, 1350),
+    ("Cummins", "QSK60-DM", 2000, 1800),
+    ("Cummins", "QSK95-DM", 3200, 2800),
+    ("Volvo Penta", "D9 MG", 260, 215),
+    ("Volvo Penta", "D13 MG", 400, 330),
+    ("Volvo Penta", "D16 MG", 550, 460),
+    ("MAN", "D2868 LE421", 500, 420),
+    ("MAN", "D2862 LE431", 750, 630),
+    ("MAN", "D2862 LE441", 880, 740),
+]
+
+# Base de Datos de Generadores de Emergencia
+EMERGENCY_GEN_DATABASE = [
+    ("Caterpillar", "C4.4", 80, 65),
+    ("Caterpillar", "C4.4 ACERT", 118, 100),
+    ("Caterpillar", "C7.1 ACERT", 160, 135),
+    ("Cummins", "QSB7-DM", 120, 100),
+    ("Cummins", "QSL9-DM", 200, 170),
+    ("Volvo Penta", "D5A T", 85, 70),
+    ("Volvo Penta", "D8 MG", 180, 150),
+]
 
 
 # --- FUNCIÓN HELPER PARA CREAR CONSUMIDORES DEFAULT ---
@@ -169,43 +197,6 @@ def get_consumidor_dict(c_base):
             'ksr': widgets.FloatText(value=ksr_val, layout=widgets.Layout(width='60px'), description="Ksr:")
         }
     return consumidor
-
-
-# --- Base de Datos de Generadores ---
-GEN_DATABASE = [
-    # (Fabricante, Modelo, Potencia_kW_60Hz, Potencia_kW_50Hz)
-    ("Caterpillar", "C7.1", 175, 150),
-    ("Caterpillar", "C9.3", 300, 250),
-    ("Caterpillar", "C18", 550, 450),
-    ("Caterpillar", "C18 ACERT", 600, 500),
-    ("Caterpillar", "C32", 940, 800),
-    ("Caterpillar", "3508C", 800, 680),
-    ("Caterpillar", "3512C", 1360, 1150),
-    ("Caterpillar", "3516C", 2000, 1700),
-    ("Caterpillar", "3516E", 2550, 2200),
-    ("Cummins", "QSK19-DM", 560, 460),
-    ("Cummins", "QSK38-DM", 1200, 1000),
-    ("Cummins", "QSK50-DM", 1600, 1350),
-    ("Cummins", "QSK60-DM", 2000, 1800),
-    ("Cummins", "QSK95-DM", 3200, 2800),
-    ("Volvo Penta", "D9 MG", 260, 215),
-    ("Volvo Penta", "D13 MG", 400, 330),
-    ("Volvo Penta", "D16 MG", 550, 460),
-    ("MAN", "D2868 LE421", 500, 420),
-    ("MAN", "D2862 LE431", 750, 630),
-    ("MAN", "D2862 LE441", 880, 740),
-]
-
-# Base de Datos de Generadores de Emergencia
-EMERGENCY_GEN_DATABASE = [
-    ("Caterpillar", "C4.4", 80, 65),
-    ("Caterpillar", "C4.4 ACERT", 118, 100),
-    ("Caterpillar", "C7.1 ACERT", 160, 135),
-    ("Cummins", "QSB7-DM", 120, 100),
-    ("Cummins", "QSL9-DM", 200, 170),
-    ("Volvo Penta", "D5A T", 85, 70),
-    ("Volvo Penta", "D8 MG", 180, 150),
-]
 
 
 # Almacenará la lista de todos los consumidores que agreguemos.
@@ -1977,7 +1968,7 @@ try:
 
     # --- 8. EJECUTAR CÁLCULOS INICIALES (para mostrar estado por defecto) ---
     actualizar_lista_consumidores()
-    # Llamar a la función wrapper para la carga inicial
+    
     # --- CAMBIO IMPORTANTE: COMENTAR ESTA LÍNEA PARA EL DEPLOY ---
     # on_actualizar_calculos_clicked(None) 
     # --- FIN DEL CAMBIO ---
@@ -1992,62 +1983,3 @@ except Exception as e:
     display(HTML(f"<h2 style='color:red;'>Error Inesperado al Iniciar la App</h2><pre>{e}</pre>"))
 
 print("¡Aplicación de Balance Eléctrico cargada con éxito!")
-```
-
----
-
-### 2. `requirements.txt` (Este no cambia)
-
-```text
-# --- Motor de Jupyter (EL FIX CLAVE) ---
-ipykernel
-
-# --- Servidor de la App ---
-voila
-
-# --- Librerías de tu App de Colab ---
-ipywidgets
-pandas
-matplotlib
-openpyxl
-
-# --- Librería de Python para Graphviz ---
-# La app final no usa 'graphviz', pero la dejamos por si
-# alguna dependencia interna (matplotlib?) la necesita.
-graphviz
-```
-
----
-
-### 3. `Dockerfile` (ACTUALIZADO)
-
-Este `Dockerfile` ahora copia `app.py` y ejecuta `voila app.py`.
-
-```dockerfile
-# Usa una imagen base de Python ligera
-FROM python:3.10-slim
-
-# Establece el directorio de trabajo dentro del contenedor
-WORKDIR /app
-
-# 1. Instala las dependencias del sistema (APT)
-RUN apt-get update && apt-get install -y \
-    graphviz \
-    && rm -rf /var/lib/apt/lists/*
-
-# 2. Instala las dependencias de Python (PIP)
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-
-# 3. Copia el resto de tu proyecto
-# --- CAMBIO IMPORTANTE: Copiamos app.py ---
-COPY app.py .
-# (Si tenés otros archivos, como .json, también poné COPY . . )
-
-# 4. Configura el entorno
-ENV PORT 10000
-EXPOSE $PORT
-
-# 5. Define el comando para correr la aplicación (¡VERSIÓN ROBUSTA!)
-# --- CAMBIO IMPORTANTE: Ejecutamos app.py ---
-CMD voila app.py --Voila.port=$PORT --Voila.ip=0.0.0.0 --no-browser
