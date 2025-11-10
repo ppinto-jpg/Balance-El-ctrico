@@ -1,0 +1,10 @@
+{
+  "VoilaConfiguration": {
+    "file_allowlist": [".*"],
+    "enable_nbextensions": true,
+    "show_tracebacks": true,
+    "ip": "0.0.0.0",
+    "open_browser": false,
+    "theme": "light"
+  }
+}
