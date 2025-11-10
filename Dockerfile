@@ -16,7 +16,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # 3. Copia el resto de tu proyecto
-# Esto incluye tu archivo .ipynb (ej. app.ipynb) y cualquier otro archivo
+# Esto incluye tu archivo .ipynb y cualquier otro archivo
 COPY . .
 
 # 4. Configura el entorno
@@ -26,5 +26,5 @@ EXPOSE $PORT
 
 # 5. Define el comando para correr la aplicación (CORREGIDO)
 # Este es el "start command". 
-# Asegúrate de que tu notebook se llame 'app.ipynb'
-CMD voila app.ipynb --port=$PORT --ip=0.0.0.0 --no-browser
+# ¡YA ESTÁ ACTUALIZADO CON TU NOMBRE DE NOTEBOOK!
+CMD voila Balance-E-Full_App.ipynb --port=$PORT --ip=0.0.0.0 --no-browser
