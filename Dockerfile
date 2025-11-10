@@ -24,7 +24,7 @@ COPY . .
 ENV PORT 10000
 EXPOSE $PORT
 
-# 5. Define el comando para correr la aplicación
-# Ejecuta Voila, apuntando a tu notebook, en el puerto y host correctos
-# Reemplaza "app.ipynb" si tu notebook tiene otro nombre
-CMD ["voila", "app.ipynb", "--port", "$PORT", "--host=0.0.0.0", "--no-browser"]
+# 5. Define el comando para correr la aplicación (CORREGIDO)
+# Este es el "start command". 
+# Asegúrate de que tu notebook se llame 'app.ipynb'
+CMD voila app.ipynb --port=$PORT --ip=0.0.0.0 --no-browser
