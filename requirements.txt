@@ -1,8 +1,7 @@
+ipykernel
+voila
 ipywidgets
 pandas
 numpy
 matplotlib
 openpyxl
-voila
-ipykernel
-graphviz
