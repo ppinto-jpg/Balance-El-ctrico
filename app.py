@@ -242,7 +242,7 @@ for modo in modos_operacion:
 
 # --- CORRECCIÓN: Layout de modos ahora en Acordeón para mejor visibilidad ---
 layout_modos_accordion = widgets.Accordion(
-    children=[widgets.HBox(items_modos, layout=widgets.Layout(width='100%', justify_content='space-around'))],
+    children=[widgets.HBox(items_modos, layout=widgets.Layout(width='100%', justify_content='space_around'))],
     selected_index=None # Colapsado por defecto
 )
 layout_modos_accordion.set_title(0, "Ver/Ocultar Coeficientes (Kn y Ksr)")
@@ -636,7 +636,7 @@ def actualizar_lista_consumidores():
                 widgets.HTML(f"<b>{modo}</b>"), w_kn, w_ksr
             ], layout=widgets.Layout(width='19%', border='1px solid #f0f0f0', padding='2px', align_items='center')))
         
-        modos_hbox = widgets.HBox(modos_widgets_list, layout=widgets.Layout(width='100%', justify_content='space-around'))
+        modos_hbox = widgets.HBox(modos_widgets_list, layout=widgets.Layout(width='100%', justify_content='space_around'))
 
         # --- 2b. Crear el Acordeón ---
         modos_accordion = widgets.Accordion(
