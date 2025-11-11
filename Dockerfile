@@ -13,9 +13,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-# --- LÍNEA DE DEBUG ---
-# Esto mostrará en los logs de construcción qué archivos terminaron realmente en la carpeta /app
-RUN ls -la /app
-# ----------------------
+# CAMBIOS PARA AHORRAR MEMORIA:
+# 1. Eliminado --preheat_kernel=True (consume RAM antes de tiempo)
+# 2. Agregado --Voila.pool_size=0 (no mantiene kernels extra en espera)
+# 3. Agregado --VoilaExecutor.timeout=600 (da más tiempo antes de matar un proceso lento, por si la CPU está saturada)
 
-CMD sh -c "voila app.ipynb --port=$PORT --no-browser --Voila.ip=0.0.0.0 --theme=light --show_tracebacks=True"
+CMD sh -c "voila app.ipynb --port=$PORT --no-browser --Voila.ip=0.0.0.0 --theme=light --Voila.pool_size=0 --VoilaConfiguration.file_allowlist=\"['.*']\""
