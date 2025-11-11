@@ -14,10 +14,9 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copiamos el resto (asegúrate de que app.ipynb esté aquí)
+# Copiamos el resto (incluyendo app.ipynb)
 COPY . .
 
 # Comando nativo de Voila para notebooks.
 # Es mucho más estable que ejecutar .py directamente.
-# --Theme y otras opciones se pueden pasar aquí directamente.
 CMD sh -c "voila app.ipynb --port=$PORT --no-browser --Voila.ip=0.0.0.0 --theme=light --show_tracebacks=True"
